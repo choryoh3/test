@@ -5,35 +5,35 @@
       "name": "ナナ",
       "age": 23,
       "personalColor": "blue",
-      "deleteFlag": false
+      "deleteFlag": true
     },
     {
       "id": 2,
       "name": "コウタ",
       "age": 53,
       "personalColor": "green",
-      "deleteFlag": false
+      "deleteFlag": true
     },
     {
       "id": 3,
       "name": "ユウキ",
       "age": 28,
       "personalColor": "red",
-      "deleteFlag": false
+      "deleteFlag": true
     },
     {
       "id": 4,
       "name": "コウタ",
       "age": 44,
       "personalColor": "yellow",
-      "deleteFlag": false
+      "deleteFlag": true
     },
     {
       "id": 5,
       "name": "マイ",
       "age": 51,
       "personalColor": "purple",
-      "deleteFlag": false
+      "deleteFlag": true
     },
     {
       "id": 6,
