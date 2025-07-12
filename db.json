@@ -231,4 +231,6 @@
     { "productId": "P017", "productName": "VRヘッドセット" },
     { "productId": "P018", "productName": "スマートスピーカー" },
     { "productId": "P019", "productName": "グラフィックボード" },
-    { "productId": "P020", "productName": "ポータブル充電器
+    { "productId": "P020", "productName": "ポータブル充電器" }
+  ]
+}
