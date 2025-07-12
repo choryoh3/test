@@ -1,25 +1,145 @@
 {
   "users": [
-    { "id": 1, "name": "ナナ", "age": 23, "personalColor": "blue" },
-    { "id": 2, "name": "コウタ", "age": 53, "personalColor": "green" },
-    { "id": 3, "name": "ユウキ", "age": 28, "personalColor": "red" },
-    { "id": 4, "name": "コウタ", "age": 44, "personalColor": "yellow" },
-    { "id": 5, "name": "マイ", "age": 51, "personalColor": "purple" },
-    { "id": 6, "name": "コウタ", "age": 18, "personalColor": "orange" },
-    { "id": 7, "name": "ナナ", "age": 19, "personalColor": "pink" },
-    { "id": 8, "name": "ハルキ", "age": 18, "personalColor": "brown" },
-    { "id": 9, "name": "マイ", "age": 23, "personalColor": "gray" },
-    { "id": 10, "name": "リョウ", "age": 30, "personalColor": "navy" },
-    { "id": 11, "name": "アイ", "age": 25, "personalColor": "teal" },
-    { "id": 12, "name": "シン", "age": 50, "personalColor": "lime" },
-    { "id": 13, "name": "シン", "age": 39, "personalColor": "cyan" },
-    { "id": 14, "name": "ユウキ", "age": 24, "personalColor": "magenta" },
-    { "id": 15, "name": "ナナ", "age": 39, "personalColor": "gold" },
-    { "id": 16, "name": "リョウ", "age": 57, "personalColor": "silver" },
-    { "id": 17, "name": "ユズキ", "age": 42, "personalColor": "indigo" },
-    { "id": 18, "name": "サクラ", "age": 58, "personalColor": "maroon" },
-    { "id": 19, "name": "サクラ", "age": 37, "personalColor": "olive" },
-    { "id": 20, "name": "アイ", "age": 34, "personalColor": "aqua" }
+    {
+      "id": 1,
+      "name": "ナナ",
+      "age": 23,
+      "personalColor": "blue",
+      "deleteFlag": false
+    },
+    {
+      "id": 2,
+      "name": "コウタ",
+      "age": 53,
+      "personalColor": "green",
+      "deleteFlag": false
+    },
+    {
+      "id": 3,
+      "name": "ユウキ",
+      "age": 28,
+      "personalColor": "red",
+      "deleteFlag": false
+    },
+    {
+      "id": 4,
+      "name": "コウタ",
+      "age": 44,
+      "personalColor": "yellow",
+      "deleteFlag": false
+    },
+    {
+      "id": 5,
+      "name": "マイ",
+      "age": 51,
+      "personalColor": "purple",
+      "deleteFlag": false
+    },
+    {
+      "id": 6,
+      "name": "コウタ",
+      "age": 18,
+      "personalColor": "orange",
+      "deleteFlag": false
+    },
+    {
+      "id": 7,
+      "name": "ナナ",
+      "age": 19,
+      "personalColor": "pink",
+      "deleteFlag": false
+    },
+    {
+      "id": 8,
+      "name": "ハルキ",
+      "age": 18,
+      "personalColor": "brown",
+      "deleteFlag": false
+    },
+    {
+      "id": 9,
+      "name": "マイ",
+      "age": 23,
+      "personalColor": "gray",
+      "deleteFlag": false
+    },
+    {
+      "id": 10,
+      "name": "リョウ",
+      "age": 30,
+      "personalColor": "navy",
+      "deleteFlag": false
+    },
+    {
+      "id": 11,
+      "name": "アイ",
+      "age": 25,
+      "personalColor": "teal",
+      "deleteFlag": false
+    },
+    {
+      "id": 12,
+      "name": "シン",
+      "age": 50,
+      "personalColor": "lime",
+      "deleteFlag": false
+    },
+    {
+      "id": 13,
+      "name": "シン",
+      "age": 39,
+      "personalColor": "cyan",
+      "deleteFlag": false
+    },
+    {
+      "id": 14,
+      "name": "ユウキ",
+      "age": 24,
+      "personalColor": "magenta",
+      "deleteFlag": false
+    },
+    {
+      "id": 15,
+      "name": "ナナ",
+      "age": 39,
+      "personalColor": "gold",
+      "deleteFlag": false
+    },
+    {
+      "id": 16,
+      "name": "リョウ",
+      "age": 57,
+      "personalColor": "silver",
+      "deleteFlag": false
+    },
+    {
+      "id": 17,
+      "name": "ユズキ",
+      "age": 42,
+      "personalColor": "indigo",
+      "deleteFlag": false
+    },
+    {
+      "id": 18,
+      "name": "サクラ",
+      "age": 58,
+      "personalColor": "maroon",
+      "deleteFlag": false
+    },
+    {
+      "id": 19,
+      "name": "サクラ",
+      "age": 37,
+      "personalColor": "olive",
+      "deleteFlag": false
+    },
+    {
+      "id": 20,
+      "name": "アイ",
+      "age": 34,
+      "personalColor": "aqua",
+      "deleteFlag": false
+    }
   ],
   "productList": [
     { "productId": "P001", "productName": "ノートパソコン" },
