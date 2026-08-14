@@ -1,0 +1,173 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "ナナ",
+      "age": 23,
+      "personalColor": "blue",
+      "deleteFlag": true
+    },
+    {
+      "id": 2,
+      "name": "コウタ",
+      "age": 53,
+      "personalColor": "green",
+      "deleteFlag": true
+    },
+    {
+      "id": 3,
+      "name": "ユウキ",
+      "age": 28,
+      "personalColor": "red",
+      "deleteFlag": true
+    },
+    {
+      "id": 4,
+      "name": "コウタ",
+      "age": 44,
+      "personalColor": "yellow",
+      "deleteFlag": true
+    },
+    {
+      "id": 5,
+      "name": "マイ",
+      "age": 51,
+      "personalColor": "purple",
+      "deleteFlag": true
+    },
+    {
+      "id": 6,
+      "name": "コウタ",
+      "age": 18,
+      "personalColor": "orange",
+      "deleteFlag": false
+    },
+    {
+      "id": 7,
+      "name": "ナナ",
+      "age": 19,
+      "personalColor": "pink",
+      "deleteFlag": false
+    },
+    {
+      "id": 8,
+      "name": "ハルキ",
+      "age": 18,
+      "personalColor": "brown",
+      "deleteFlag": false
+    },
+    {
+      "id": 9,
+      "name": "マイ",
+      "age": 23,
+      "personalColor": "gray",
+      "deleteFlag": false
+    },
+    {
+      "id": 10,
+      "name": "リョウ",
+      "age": 30,
+      "personalColor": "navy",
+      "deleteFlag": false
+    },
+    {
+      "id": 11,
+      "name": "アイ",
+      "age": 25,
+      "personalColor": "teal",
+      "deleteFlag": false
+    },
+    {
+      "id": 12,
+      "name": "シン",
+      "age": 50,
+      "personalColor": "lime",
+      "deleteFlag": false
+    },
+    {
+      "id": 13,
+      "name": "シン",
+      "age": 39,
+      "personalColor": "cyan",
+      "deleteFlag": false
+    },
+    {
+      "id": 14,
+      "name": "ユウキ",
+      "age": 24,
+      "personalColor": "magenta",
+      "deleteFlag": false
+    },
+    {
+      "id": 15,
+      "name": "ナナ",
+      "age": 39,
+      "personalColor": "gold",
+      "deleteFlag": false
+    },
+    {
+      "id": 16,
+      "name": "リョウ",
+      "age": 57,
+      "personalColor": "silver",
+      "deleteFlag": false
+    },
+    {
+      "id": 17,
+      "name": "ユズキ",
+      "age": 42,
+      "personalColor": "indigo",
+      "deleteFlag": false
+    },
+    {
+      "id": 18,
+      "name": "サクラ",
+      "age": 58,
+      "personalColor": "maroon",
+      "deleteFlag": false
+    },
+    {
+      "id": 19,
+      "name": "サクラ",
+      "age": 37,
+      "personalColor": "olive",
+      "deleteFlag": false
+    },
+    {
+      "id": 20,
+      "name": "アイ",
+      "age": 34,
+      "personalColor": "aqua",
+      "deleteFlag": false
+    }
+  ],
+  "productList": [
+    { "productId": "P001", "productName": "ノートパソコン" },
+    { "productId": "P002", "productName": "スマートフォン" },
+    { "productId": "P003", "productName": "タブレット" },
+    { "productId": "P004", "productName": "ワイヤレスイヤホン" },
+    { "productId": "P005", "productName": "スマートウォッチ" },
+    { "productId": "P006", "productName": "デジタルカメラ" },
+    { "productId": "P007", "productName": "Bluetoothスピーカー" },
+    { "productId": "P008", "productName": "ゲーミングマウス" },
+    { "productId": "P009", "productName": "メカニカルキーボード" },
+    { "productId": "P010", "productName": "4Kモニター" },
+    { "productId": "P011", "productName": "外付けSSD" },
+    { "productId": "P012", "productName": "USBハブ" },
+    { "productId": "P013", "productName": "Webカメラ" },
+    { "productId": "P014", "productName": "プリンター" },
+    { "productId": "P015", "productName": "プロジェクター" },
+    { "productId": "P016", "productName": "電子書籍リーダー" },
+    { "productId": "P017", "productName": "VRヘッドセット" },
+    { "productId": "P018", "productName": "スマートスピーカー" },
+    { "productId": "P019", "productName": "グラフィックボード" },
+    { "productId": "P020", "productName": "ポータブル充電器" }
+  ],
+  "todos": [
+    { "id": 1, "text": "買い物に行く", "completed": false },
+    { "id": 2, "text": "部屋を掃除する", "completed": true },
+    { "id": 3, "text": "宿題をする", "completed": false },
+    { "id": 4, "text": "友達と遊ぶ", "completed": true },
+    { "id": 5, "text": "映画を見る", "completed": false }
+  ]
+}
