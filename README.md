@@ -1114,4 +1114,5 @@ chore/upgrade-dependencies              # 雑務・依存更新
 - [Conventional Commits 仕様](https://www.conventionalcommits.org/ja/)
 - [Learn Git Branching（ブランチをビジュアルで学ぶ）](https://learngitbranching.js.org/?locale=ja)
 - [gitignore テンプレート生成](https://www.toptal.com/developers/gitignore)
+- [GitHubとGitとSSHと]（https://qiita.com/danieltanaka/items/79555c3fa16ae533fc5e）
 
