@@ -6,18 +6,19 @@
 ## 目次
 1. [Gitの本質を理解する（概念マップ）](#1-gitの本質を理解する概念マップ)
 2. [環境セットアップ](#2-環境セットアップ)
-3. [リポジトリの作成と接続](#3-リポジトリの作成と接続)
-4. [毎日使う基本ワークフロー](#4-毎日使う基本ワークフロー)
-5. [ブランチ戦略](#5-ブランチ戦略)
-6. [マージ・リベース・コンフリクト解消](#6-マージリベースコンフリクト解消)
-7. [リモート操作](#7-リモート操作)
-8. [やり直し・取り消し（最重要）](#8-やり直し取り消し最重要)
-9. [スタッシュ・チェリーピック](#9-スタッシュチェリーピック)
-10. [GitHub固有の操作（PR・Issue・Fork）](#10-github固有の操作prissueforк)
-11. [GitHub Actions（CI/CD入門）](#11-github-actionscicd入門)
-12. [状況別トラブルシューティング](#12-状況別トラブルシューティング)
-13. [チーム開発のベストプラクティス](#13-チーム開発のベストプラクティス)
-14. [コマンド逆引き辞典](#14-コマンド逆引き辞典)
+3. [GitHubへの接続方式完全解説（HTTPS・SSH）](#3-githubへの接続方式完全解説httpsssh)
+4. [リポジトリの作成と接続](#4-リポジトリの作成と接続)
+5. [毎日使う基本ワークフロー](#5-毎日使う基本ワークフロー)
+6. [ブランチ戦略](#6-ブランチ戦略)
+7. [マージ・リベース・コンフリクト解消](#7-マージリベースコンフリクト解消)
+8. [リモート操作](#8-リモート操作)
+9. [やり直し・取り消し（最重要）](#9-やり直し取り消し最重要)
+10. [スタッシュ・チェリーピック](#10-スタッシュチェリーピック)
+11. [GitHub固有の操作（PR・Issue・Fork）](#11-github固有の操作prissueforк)
+12. [GitHub Actions（CI/CD入門）](#12-github-actionscicd入門)
+13. [状況別トラブルシューティング](#13-状況別トラブルシューティング)
+14. [チーム開発のベストプラクティス](#14-チーム開発のベストプラクティス)
+15. [コマンド逆引き辞典](#15-コマンド逆引き辞典)
 
 ---
 
@@ -88,35 +89,197 @@ git config --global alias.lg "log --oneline --graph --all"
 git config --list
 ```
 
-### SSH とは何か（そもそも論）
+---
+
+## 3. GitHubへの接続方式完全解説（HTTPS・SSH）
+
+### はじめに：「接続方式」がなぜ重要か
+
+`git push` や `git clone` の裏側では「あなたのPC ↔ GitHubサーバー」間で通信が発生します。この通信に使う「プロトコル（通信規則）」が **HTTPS** と **SSH** の2種類あります。どちらを選ぶかで認証の仕組み・日常の快適さ・セキュリティが大きく変わります。
+
+---
+
+### そもそも「プロトコル」とは何か
+
+コンピュータ同士の通信は「プロトコル」という決め事（ルール）に従っています。
+
+```
+人間の世界：  日本語 + 英語 + ...  （言語 = コミュニケーションのルール）
+PC の世界：   HTTPS + SSH + ...    （プロトコル = 通信のルール）
+```
+
+Git が使う代表的なプロトコル：
+
+| プロトコル | 特徴 | 認証方式 | ポート |
+|---|---|---|---|
+| **HTTPS** | Webと同じ仕組み。企業FWを通りやすい | ユーザー名 + PAT | 443 |
+| **SSH** | セキュアシェル。鍵認証で完全自動化 | 公開鍵暗号 | 22 |
+| `git://` | 読み取り専用・非推奨 | なし | 9418 |
+
+---
+
+### HTTPS とは何か（基礎から徹底解説）
+
+#### HTTP と HTTPS の違い
+
+**HTTP（HyperText Transfer Protocol）** はウェブページのデータを送受信する通信規則です。しかし HTTP は**平文（暗号化なし）**のため、通信を傍受されると内容が丸見えになります。
+
+```
+HTTP（危険）：
+  あなた ──"Password: ghp_xxx"──▶ 中継ルーター（傍受できる！）──▶ GitHub
+
+HTTPS（安全）：
+  あなた ──"Kx9#fQ..."（TLS暗号化済み）──▶ 中継ルーター（解読不可）──▶ GitHub
+```
+
+**HTTPS（HTTP Secure）** は HTTP に **TLS（Transport Layer Security）** という暗号化レイヤーを被せたものです。
+
+#### TLS とは何か
+
+TLS（旧称 SSL）は「通信相手が本物であることを確認し、通信内容を暗号化する」仕組みです。
+
+```
+TLS の2つの役割：
+  1. 認証  ─ 「接続先は本物の github.com か？」（サーバー証明書で検証）
+  2. 暗号化 ─ 「通信内容を第三者が読めないようにする」
+```
+
+- **ポート：443**（HTTP は 80）
+- ブラウザの 🔒 マーク = TLS が有効な証拠
+- `https://github.com/...` という URL が HTTPS 接続のサイン
+
+#### GitHubがパスワード認証を廃止した背景（2021年8月）
+
+2021年8月13日以降、GitHubは Git 操作でのパスワード認証を無効化しました。
+
+```
+❌ 廃止（現在は使用不可）
+git push  →  Password: ••••••••  （GitHubアカウントのパスワード）
+
+✅ 現在の正しい方法
+git push  →  Password: ghp_xxxxxxxxxxxxxxxxxxxxxx  （Personal Access Token）
+```
+
+**廃止理由：**
+- パスワードは他サービスとの使い回しによる漏洩リスクが高い
+- 盗まれたパスワードは GitHub 以外でも悪用される
+- PAT は権限・有効期限を細かく設定でき、不要になったらいつでも無効化できる
+
+---
+
+### Personal Access Token（PAT） — HTTPSの認証キー
+
+#### PAT とは何か
+
+PAT（Personal Access Token = 個人アクセストークン）は「GitHubが発行する、パスワードの代わりに使う認証文字列」です。
+
+```
+形式例： ghp_AbCdEfGhIjKlMnOpQrStUvWxYz012345
+         ↑ ghp_ プレフィックスで GitHub Personal Token だとわかる
+```
+
+PAT には2種類あります：
+
+| 種類 | 特徴 | 推奨度 |
+|---|---|---|
+| **Fine-grained PAT** | リポジトリ・権限を細かく設定可。有効期限必須 | ◎ セキュリティ重視 |
+| **Classic PAT** | 従来形式。設定がシンプル | ○ 手軽に使いたい場合 |
+
+#### Classic PAT の作成手順（GUI）
+
+```
+1. GitHub 右上アイコン → Settings
+2. 左メニュー最下部 → Developer settings
+3. Personal access tokens → Tokens (classic)
+4. Generate new token (classic) をクリック
+5. Note: 用途メモ（例: "MacBook - daily git operations"）
+6. Expiration: 有効期限（90日推奨。"No expiration" は非推奨）
+7. スコープ（権限）を選択：
+     ✅ repo      → プライベートリポジトリの読み書き（通常はこれだけで十分）
+     ✅ workflow  → GitHub Actions の操作が必要な場合
+     □  delete_repo → 削除権限（不要なら絶対に付けない）
+8. Generate token ボタン
+   ⚠️ トークンは一度しか表示されない。必ずコピーして安全な場所に保存！
+```
+
+#### PAT を実際に使う
+
+```bash
+# HTTPS でクローン（認証を求められる）
+git clone https://github.com/USERNAME/REPO.git
+# Username: yourname
+# Password: ghp_xxxxxxxxxxxxxxxxxxxx  ← ここに PAT を貼り付け
+
+# URL にトークンを埋め込む（履歴に残るので非推奨）
+git clone https://yourname:ghp_xxx@github.com/USERNAME/REPO.git
+```
+
+---
+
+### Credential Helper — PAT を毎回入力しないために
+
+**Credential Helper** は認証情報をOSのセキュアストレージに保存し、次回から自動入力してくれます。
+
+```bash
+# ── Windows ──
+# Git for Windows 標準搭載（Windows 資格情報マネージャーに保存）
+git config --global credential.helper manager
+
+# ── Mac ──
+# macOS キーチェーンに保存
+git config --global credential.helper osxkeychain
+
+# ── Linux ──
+# メモリに一時保存（デフォルト15分。再起動で消える）
+git config --global credential.helper cache
+git config --global credential.helper "cache --timeout=86400"  # 24時間に延長
+
+# ディスクに永続保存（~/.git-credentials にプレーンテキスト保存）
+git config --global credential.helper store
+# ⚠️ セキュリティリスクあり。個人の信頼できるPCのみで使用すること
+```
+
+**GitHub CLI を使った認証（最も簡単・推奨）：**
+
+```bash
+# インストール後、対話的に認証設定（https://cli.github.com/）
+gh auth login
+# ? What account do you want to log into? → GitHub.com
+# ? What is your preferred protocol?       → HTTPS  (or SSH)
+# ? Authenticate Git with your GitHub credentials? → Yes
+# → ブラウザが開いてOAuth認証 → 以降 git push/pull が自動認証
+```
+
+---
+
+### SSH とは何か（基礎から徹底解説）
 
 **SSH（Secure Shell）** は「遠隔地のサーバーに安全に接続するための通信プロトコル」です。
 
 ```
 あなたのPC  ──── 暗号化されたトンネル ────  GitHubのサーバー
-            （SSH プロトコル）
+            （SSH プロトコル、ポート22）
 ```
 
-「Shell（シェル）」とはコマンドを打つ黒い画面のこと。それを「Secure（安全）」に「遠くから」操作するのが SSH です。Git/GitHub の文脈では「コードをやり取りする通信を安全に行うための仕組み」として使います。
+元々はサーバー管理者がリモートサーバーをコマンドラインで操作するためのツールでしたが、Git/GitHub の文脈では「コードのやり取りを安全に行う認証・通信方式」として広く使われています。
 
 ---
 
-### HTTPS vs SSH：2つの接続方式の違い
-
-GitHubのリポジトリへの接続方法は主に2種類あります。
+### HTTPS vs SSH — 徹底比較
 
 | 比較項目 | HTTPS | SSH |
 |---|---|---|
 | URL形式 | `https://github.com/user/repo.git` | `git@github.com:user/repo.git` |
-| 認証方法 | ユーザー名 + パスワード（またはトークン） | 秘密鍵ファイル |
-| 毎回認証 | 必要（credential helper設定しないと毎回） | 不要（鍵が登録済みなら自動） |
+| 認証方法 | ユーザー名 + PAT | 秘密鍵ファイル |
+| 初期設定の手間 | 少ない（PATをコピーするだけ） | やや多い（鍵生成・登録が必要） |
+| 毎回の認証 | Credential Helper で自動化可 | 鍵登録後は完全自動 |
+| PAT / 鍵の有効期限 | PATは定期更新が必要 | 鍵は削除しない限り永続 |
+| セキュリティ | PAT漏洩リスクあり（管理が必要） | 秘密鍵が手元にある限り安全 |
 | ファイアウォール | 通りやすい（ポート443） | 稀にブロックされる（ポート22） |
-| セキュリティ | トークン漏洩のリスクあり | 秘密鍵が手元にある限り安全 |
-| 設定の手間 | 少ない | 初回のみ少し手間がかかる |
-| **開発者の選択** | 初心者・一時的な利用向け | **チーム開発・日常使いの標準** |
+| 他人のPCでの作業 | ✅ 適している | ❌ 鍵を持ち込みたくない |
+| **日常開発の快適さ** | ○（Credential Helper設定後） | **◎（設定後は完全ノーストレス）** |
 
-> **結論：GitHubを日常的に使うなら SSH が圧倒的に快適。**  
-> HTTPS はトークン（PAT）の管理が面倒で、有効期限切れのたびに再設定が必要。SSH は一度設定すれば永続的に使える。
+> **結論：日常開発なら SSH が快適。一時的な利用・企業ネット環境は HTTPS が適切。**
 
 ---
 
@@ -132,7 +295,7 @@ ssh-keygen を実行すると2つのファイルが作られる：
   ~/.ssh/id_ed25519.pub  ← 公開鍵（GitHubに登録する。南京錠そのもの）
 ```
 
-**認証の流れ：**
+**認証の流れ（チャレンジ＆レスポンス方式）：**
 
 ```
 1. あなたが git push しようとする
@@ -150,21 +313,21 @@ ssh-keygen を実行すると2つのファイルが作られる：
 
 ---
 
-### なぜ ed25519 アルゴリズムを使うのか
+### なぜ Ed25519 アルゴリズムを使うのか
 
 SSH 鍵には複数の暗号アルゴリズムがあります：
 
 | アルゴリズム | 鍵長 | 速度 | セキュリティ | 推奨度 |
 |---|---|---|---|---|
-| RSA | 4096bit必要 | 遅い | 古い | △（古い環境との互換用） |
+| RSA | 4096bit必要 | 遅い | 古い設計 | △（古い環境との互換用） |
 | ECDSA | 256bit | 速い | 良い | ○ |
-| **Ed25519** | **256bit** | **最速** | **最高** | **◎ 現在の標準** |
+| **Ed25519** | **256bit** | **最速** | **最高水準** | **◎ 現在の標準** |
 
-`ed25519` は「Edwards-curve Digital Signature Algorithm」の略。短い鍵で RSA-4096 より高いセキュリティを実現します。**特別な理由がない限り ed25519 一択**です。
+`Ed25519` は「Edwards-curve Digital Signature Algorithm (Curve25519)」の略。短い鍵で RSA-4096 より高いセキュリティを実現します。**特別な理由がない限り Ed25519 一択**です。
 
 ---
 
-### SSH鍵の設定（GitHubへの認証）— 完全手順
+### SSH 鍵の設定（GitHubへの認証）— 完全手順
 
 #### Step 1：鍵ペアを生成する
 
@@ -173,24 +336,25 @@ SSH 鍵には複数の暗号アルゴリズムがあります：
 ssh-keygen -t ed25519 -C "you@example.com"
 
 # 実行すると以下のプロンプトが出る：
-# Enter file in which to save the key (~/.ssh/id_ed25519):  → Enterで既定パスに保存
+# Enter file in which to save the key (~/.ssh/id_ed25519):  → Enter で既定パスに保存
 # Enter passphrase (empty for no passphrase):               → 空でもOK（後述）
 # Enter same passphrase again:                              → 同じものを入力
 ```
 
-> **パスフレーズについて：**  
-> 設定すると秘密鍵自体が暗号化され、PCが盗まれても鍵が使えない。  
-> 設定しないと push のたびにパスフレーズ入力が不要で快適。  
-> **個人PCなら空で問題なし。会社のPCや共有環境なら設定推奨。**
+> **パスフレーズについて：**
+> - 設定すると秘密鍵自体が暗号化され、PCが盗まれても鍵が使えない
+> - 設定しないと push のたびにパスフレーズ入力が不要で快適
+> - **個人PCなら空で問題なし。会社のPCや共有環境なら設定推奨**
 
 #### Step 2：生成されたファイルを確認する
 
 ```bash
-ls ~/.ssh/
+# Mac / Linux
+ls -la ~/.ssh/
 # id_ed25519      ← 秘密鍵（パーミッション 600 であること）
 # id_ed25519.pub  ← 公開鍵（GitHubに登録する）
 
-# Windows の場合
+# Windows (PowerShell)
 dir $env:USERPROFILE\.ssh\
 ```
 
@@ -214,7 +378,7 @@ Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
 2. 右上のアイコン → Settings
 3. 左メニュー → SSH and GPG keys
 4. 「New SSH key」ボタン
-5. Title: 鍵の識別名（例: "MacBook Pro 2024"、"会社PC" など）
+5. Title: 鍵の識別名（例: "MacBook Pro 2025"、"会社PC" など）
 6. Key type: Authentication Key（デフォルト）
 7. Key: コピーした公開鍵を貼り付け
 8. 「Add SSH key」ボタン
@@ -229,7 +393,7 @@ eval "$(ssh-agent -s)"
 # 秘密鍵を登録（以降パスフレーズ入力が不要になる）
 ssh-add ~/.ssh/id_ed25519
 
-# Windows (PowerShell) の場合
+# Windows (PowerShell)
 Start-Service ssh-agent
 ssh-add $env:USERPROFILE\.ssh\id_ed25519
 ```
@@ -238,22 +402,41 @@ ssh-add $env:USERPROFILE\.ssh\id_ed25519
 
 ```bash
 ssh -T git@github.com
-# 初回は "Are you sure you want to continue connecting (yes/no)?" と聞かれる → yes
-# 成功すると: "Hi username! You've successfully authenticated, but GitHub does not provide shell access."
+# 初回: "Are you sure you want to continue connecting?" → yes
+# 成功: "Hi username! You've successfully authenticated, but GitHub does not provide shell access."
 ```
 
 ---
 
-### SSH を使う場面・使わない場面
+### 接続方式を後から切り替える
+
+既存リポジトリの接続方式は `git remote set-url` でいつでも変更できます。
+
+```bash
+# 現在の接続方式を確認
+git remote -v
+# origin  https://github.com/USERNAME/REPO.git (fetch)  ← HTTPS 接続中
+# origin  git@github.com:USERNAME/REPO.git (fetch)       ← SSH 接続中
+
+# HTTPS → SSH に変更
+git remote set-url origin git@github.com:USERNAME/REPO.git
+
+# SSH → HTTPS に変更
+git remote set-url origin https://github.com/USERNAME/REPO.git
+```
+
+---
+
+### 使う場面・使わない場面
 
 | 場面 | SSH | HTTPS | 理由 |
 |---|---|---|---|
-| 毎日 push/pull する | ✅ 推奨 | △ | 認証が自動で快適 |
-| CI/CD（GitHub Actions等）| ✅ 推奨 | ○ | シークレット管理が楽 |
-| 他人のPCで一時作業 | ❌ | ✅ 推奨 | SSH鍵を入れたくない |
-| 企業のプロキシ環境 | △ | ✅ 推奨 | ポート22がブロックされることがある |
-| OSS をクローンするだけ | ❌ | ✅ 推奨 | 書き込みしないなら HTTPS で十分 |
-| サーバーへのデプロイ | ✅ 必須 | △ | SSH でサーバーに直接ログイン |
+| 毎日 push/pull する | ✅ 推奨 | △ | 認証が完全自動で快適 |
+| CI/CD（GitHub Actions等） | ○ | ✅ 推奨 | PAT をシークレットとして安全管理 |
+| 他人のPCで一時作業 | ❌ | ✅ 推奨 | SSH鍵を持ち込みたくない |
+| 企業のプロキシ・厳格なFW環境 | △ | ✅ 推奨 | ポート22がブロックされることがある |
+| パブリックOSSのクローンのみ | ❌ | ✅ 推奨 | 書き込みしないなら認証不要 |
+| 本番サーバーへのデプロイ | ✅ 必須 | △ | SSH でサーバーに直接ログイン |
 
 ---
 
@@ -263,15 +446,12 @@ ssh -T git@github.com
 
 ```bash
 # 鍵を別名で生成
-ssh-keygen -t ed25519 -C "work@company.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -t ed25519 -C "work@company.com"    -f ~/.ssh/id_ed25519_work
 ssh-keygen -t ed25519 -C "personal@gmail.com" -f ~/.ssh/id_ed25519_personal
-
-# ~/.ssh/config ファイルを作成してホスト別に鍵を指定
-# (ファイルが存在しない場合は新規作成)
 ```
 
 ```
-# ~/.ssh/config の内容
+# ~/.ssh/config の内容（ファイルが存在しない場合は新規作成）
 Host github-work
     HostName github.com
     User git
@@ -284,11 +464,13 @@ Host github-personal
 ```
 
 ```bash
-# 仕事用リポジトリの remote URL を書き換える
-git remote set-url origin git@github-work:company/repo.git
+# リポジトリの remote URL を Host 名に合わせる
+git remote set-url origin git@github-work:company/repo.git      # 仕事用
+git remote set-url origin git@github-personal:yourname/repo.git # 個人用
 
-# 個人用リポジトリ
-git remote set-url origin git@github-personal:yourname/repo.git
+# 接続確認
+ssh -T git@github-work      # → Hi work_username!
+ssh -T git@github-personal  # → Hi personal_username!
 ```
 
 ---
@@ -296,17 +478,23 @@ git remote set-url origin git@github-personal:yourname/repo.git
 ### よくあるエラーと対処法
 
 ```bash
+# ❌ remote: Support for password authentication was removed on August 13, 2021
+# → PAT を使っていない。Credential Helper を設定して PAT を入力する
+git config --global credential.helper manager  # Windows
+# 次の git push/pull で PAT を入力 → Credential Helper が自動保存
+
 # ❌ Permission denied (publickey)
 # → 公開鍵がGitHubに登録されていない、または秘密鍵が見つからない
 ssh -vT git@github.com   # -v でデバッグ情報を表示して原因を特定
+ssh-add -l               # 登録済みの秘密鍵一覧を確認
 
 # ❌ Host key verification failed
 # → ~/.ssh/known_hosts の古いエントリが邪魔している
-ssh-keygen -R github.com  # known_hosts からGitHubのエントリを削除
+ssh-keygen -R github.com  # known_hosts から GitHub のエントリを削除
 ssh -T git@github.com     # 再接続（yes で新しいフィンガープリントを登録）
 
-# ❌ port 22: Connection timed out（ポート22がブロックされている）
-# → ~/.ssh/config に以下を追加（HTTPS ポートで SSH を使う）
+# ❌ port 22: Connection timed out（企業FWでポート22がブロック）
+# → ~/.ssh/config に以下を追加（HTTPS ポートで SSH を使う奥の手）
 Host github.com
     Hostname ssh.github.com
     Port 443
@@ -315,7 +503,7 @@ Host github.com
 
 ---
 
-## 3. リポジトリの作成と接続
+## 4. リポジトリの作成と接続
 
 ### パターンA：ローカルで新規作成してGitHubへ
 
@@ -346,7 +534,7 @@ git remote add upstream git@github.com:ORIGINAL/REPO.git        # Fork元を追�
 
 ---
 
-## 4. 毎日使う基本ワークフロー
+## 5. 毎日使う基本ワークフロー
 
 ```
 [編集] → git add → git commit → git push → （PRを作成 or そのまま完成）
@@ -405,7 +593,7 @@ git log ファイル名                # 特定ファイルの変更履歴
 
 ---
 
-## 5. ブランチ戦略
+## 6. ブランチ戦略
 
 ### ブランチの基本操作
 
@@ -455,7 +643,7 @@ git push origin feature/新機能名
 
 ---
 
-## 6. マージ・リベース・コンフリクト解消
+## 7. マージ・リベース・コンフリクト解消
 
 ### マージ（Merge）：2つのブランチを統合する
 
@@ -526,7 +714,7 @@ VS Code はコンフリクト箇所を自動ハイライトし、以下のボタ
 
 ---
 
-## 7. リモート操作
+## 8. リモート操作
 
 ### fetch・pull・push の違い
 
@@ -560,7 +748,7 @@ git branch --set-upstream-to=origin/master master   # 上流ブランチを手�
 
 ---
 
-## 8. やり直し・取り消し（最重要）
+## 9. やり直し・取り消し（最重要）
 
 ### 状況別の取り消しコマンド早見表
 
@@ -616,7 +804,7 @@ git reset --hard HEAD@{3}         # その状態に強制リセット
 
 ---
 
-## 9. スタッシュ・チェリーピック
+## 10. スタッシュ・チェリーピック
 
 ### git stash（作業を一時避難する）
 
@@ -644,7 +832,7 @@ git cherry-pick --no-commit HASH  # 適用するがコミットはしない（�
 
 ---
 
-## 10. GitHub固有の操作（PR・Issue・Fork）
+## 11. GitHub固有の操作（PR・Issue・Fork）
 
 ### Pull Request（PR）の基本フロー
 
@@ -719,7 +907,7 @@ gh api /gitignore/templates/Node | jq -r '.source' > .gitignore
 
 ---
 
-## 11. GitHub Actions（CI/CD入門）
+## 12. GitHub Actions（CI/CD入門）
 
 ### 基本構造（`.github/workflows/ci.yml`）
 
@@ -758,7 +946,7 @@ on:
 
 ---
 
-## 12. 状況別トラブルシューティング
+## 13. 状況別トラブルシューティング
 
 ### ❌ 間違ったファイルをコミットしてしまった
 
@@ -833,7 +1021,7 @@ git bisect reset                  # 終了
 
 ---
 
-## 13. チーム開発のベストプラクティス
+## 14. チーム開発のベストプラクティス
 
 ### コミットの粒度
 
@@ -883,7 +1071,7 @@ chore/upgrade-dependencies              # 雑務・依存更新
 
 ---
 
-## 14. コマンド逆引き辞典
+## 15. コマンド逆引き辞典
 
 | やりたいこと | コマンド |
 |---|---|
